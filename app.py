@@ -11,10 +11,8 @@ st.write(
     "Envie uma imagem, escolha um filtro na barra lateral e veja o resultado em tempo real."
 )
 
-# Upload da imagem
 uploaded_file = st.file_uploader("Envie uma imagem (JPG, PNG)", type=["jpg", "jpeg", "png"])
 
-# Funções de filtros
 def to_opencv(image_pil):
     """Converte imagem PIL para formato OpenCV (BGR)."""
     img = np.array(image_pil.convert("RGB"))
@@ -37,7 +35,7 @@ def aplicar_filtro(img_cv, filtro, params):
     elif filtro == "Desfoque (Blur)":
         k = params.get("kernel", 5)
         if k % 2 == 0:
-            k += 1  # kernel precisa ser ímpar
+            k += 1  
         return cv2.GaussianBlur(img_cv, (k, k), 0)
 
     elif filtro == "Detecção de Bordas (Canny)":
@@ -47,8 +45,8 @@ def aplicar_filtro(img_cv, filtro, params):
         return cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
 
     elif filtro == "Ajuste de Brilho/Contraste":
-        alpha = params.get("alpha", 1.0)  # contraste
-        beta = params.get("beta", 0)      # brilho
+        alpha = params.get("alpha", 1.0)  
+        beta = params.get("beta", 0)      
         ajustada = cv2.convertScaleAbs(img_cv, alpha=alpha, beta=beta)
         return ajustada
 
@@ -70,11 +68,9 @@ def aplicar_filtro(img_cv, filtro, params):
 
 
 if uploaded_file is not None:
-    # Lê a imagem com PIL e converte para OpenCV
     image_pil = Image.open(uploaded_file)
     img_cv = to_opencv(image_pil)
 
-    # Sidebar com opções de filtro
     st.sidebar.header("Configurações de Filtro")
 
     filtro = st.sidebar.selectbox(
@@ -92,7 +88,6 @@ if uploaded_file is not None:
 
     params = {}
 
-    # Controles específicos para cada filtro
     if filtro == "Desfoque (Blur)":
         params["kernel"] = st.sidebar.slider(
             "Intensidade do desfoque (kernel)", min_value=3, max_value=51, value=9, step=2
@@ -114,7 +109,6 @@ if uploaded_file is not None:
             "Brilho (beta)", min_value=-100, max_value=100, value=0, step=5
         )
 
-    # Aplica filtro
     img_processada = aplicar_filtro(img_cv, filtro, params)
 
     col1, col2 = st.columns(2)
